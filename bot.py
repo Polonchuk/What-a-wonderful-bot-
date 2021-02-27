@@ -43,10 +43,11 @@ def planet(update, context):
             per_word.remove('/wordcount')
             if len(per_word) == 0:
                 update.message.reply_text('Please, type something.')
-                    
+                break   
             else:
                 words_num = len(per_word)
                 update.message.reply_text(f"{words_num} words.")
+                break
 
 # Реализовал задание про ближайшее полнолуние также в функции "Planet"
 
@@ -54,6 +55,80 @@ def planet(update, context):
             full_moon_date = ephem.next_full_moon(datetime.now())
 
             update.message.reply_text(f"Next full moon date is {full_moon_date}.")
+            break
+#_____________________________________________________________________________________
+# Калькулятор, выполняющий действия с двумя любыми int/float числами
+
+        if word_in_text == '/calc':
+            per_word.remove('/calc')
+            sep = ' '
+            calc = sep.join(per_word)
+
+            multifig = False
+            calc_list = []
+
+            for calc_symbol in calc:
+
+                calc_list.append(calc_symbol)
+                calc_symbol_index = len(calc_list) - 1
+
+                if calc_symbol.isdigit() or calc_symbol == '.':
+
+                    if multifig == True:
+
+                        calc_list[calc_symbol_index - 1] += calc_list[calc_symbol_index]
+                        calc_list.remove(calc_symbol)
+
+                    else:
+                        multifig = True
+    
+                elif calc_symbol == ',':
+                    if multifig == True:
+
+                        calc_list[calc_symbol_index - 1] += '.'
+                        calc_list.remove(calc_symbol)
+
+                    else:
+                        multifig = True      
+    
+                elif calc_symbol == ' ' or calc_symbol == '=':
+        
+                    calc_list.remove(calc_symbol)
+                    multifig = False
+    
+                else:
+                    multifig = False
+
+
+            calc_list[0] = float(calc_list[0])
+            calc_list[2] = float(calc_list[2])
+
+            if calc_list[1] == '+':
+                calc_result = calc_list[0] + calc_list[2]
+
+            elif calc_list[1] == '-':
+                calc_result = calc_list[0] - calc_list[2]
+
+            elif calc_list[1] == '*':
+                calc_result = calc_list[0] * calc_list[2]
+
+            elif calc_list[1] == '/':
+
+                if calc_list[2] != 0:
+                    calc_result = calc_list[0] / calc_list[2]
+                else:
+                    calc_result = 'I can not divide by zero'
+
+            else:
+                calc_result = 'This math function has not been implemented yet.'
+                break
+
+            update.message.reply_text(f"Here is your result: {calc_result}")
+            break
+        else:
+            update.message.reply_text("Sorry, what again?")
+            break
+#_________________________________________________________________________________
 
 
 def main():
